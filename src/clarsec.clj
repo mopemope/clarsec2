@@ -43,17 +43,21 @@
   (m-reduce conj (result []) parsers))
 
 (extend-protocol IParser
+
   java.lang.String
   (get-monad [^String this]
     (match-fn->parser (fn [^String i] (if (.startsWith i this) this))
                       count))
+
   java.util.regex.Pattern
   (get-monad [this]
     (match-fn->parser #(re-find (re-pattern (str "^(?:" this ")")) %)
                       (let [root-match-group #(if (vector? %) (first %) %)]
                         (comp count root-match-group))))
+
   clojure.lang.PersistentVector
   (get-monad [this] (apply m-vector this))
+
   java.lang.Object
   (get-monad [this] (result this)))
 
@@ -227,7 +231,8 @@
 (defn lexeme [p]
   (>> spaces p))
 
-(defn symb [name] (lexeme (string name)))
+(defn symb [name]
+  (string name))
 
 (def any-token
   (make-parser
@@ -269,8 +274,12 @@
 ;; -------------------------------------------------------------
 
 (def semi (symb ";"))
+
 (def colon (symb ":"))
+
 (def comma (symb ","))
+
+(def dot (symb "."))
 
 (def letter
      (satisfy #(Character/isLetter ^Character %)))
@@ -284,13 +293,10 @@
 (def digit
      (satisfy #(Character/isDigit ^Character %)))
 
-(def base-identifier
+(def identifier
      (let-bind [c  letter
                 cs (many (<|> letter digit))]
                (result (apply str (cons c cs)))))
-
-(def identifier
-     (lexeme base-identifier))
 
 (def eof
      (make-monad 'Parser
@@ -310,8 +316,8 @@
 (def spaces (many space))
 
 (def string-literal
-     (stringify (lexeme (between (is-char \") (is-char \") (many (not-char \"))))))
+  (stringify (between (is-char \") (is-char \") (many (not-char \")))))
 
 (def integer
-     (lexeme (>>== (stringify (many1 digit))
-                   #(new Integer %))))
+  (stringify (many1 digit)))
+
