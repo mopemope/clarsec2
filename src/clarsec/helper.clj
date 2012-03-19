@@ -1,5 +1,6 @@
 (ns clarsec.helper
-  (:use [clarsec core monad thread-expr]))
+  (:use [clarsec monad thread-expr])
+  (:use [clarsec]))
 
 (defn- m-assoc-1-kv [m-map key m-value]
   (let-bind [m m-map
