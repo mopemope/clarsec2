@@ -20,10 +20,10 @@
 (defn close-tag [expect-name] (arrows (symb (str "/" expect-name))))
 
 (defn element [p]
-  (let-bind [tag-name open-tag
-             contents p
-             _ (close-tag tag-name)]
-            {(keyword tag-name) contents}))
+  (white-space (let-bind [tag-name open-tag
+                          contents p
+                          _ (close-tag tag-name)]
+            {(keyword tag-name) contents})))
 
 (def xml
      (let [list$ #(flatten (list %&))]

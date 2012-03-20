@@ -37,7 +37,7 @@
 
 (def m-apply <$>)
 
-(defn m-reduce [f & rest] (apply reduce #(<$> f %1 %2) rest))
+(defn- m-reduce [f & rest] (apply reduce #(<$> f %1 %2) rest))
 
 (defn- m-vector [& parsers]
   (m-reduce conj (result []) parsers))
@@ -223,16 +223,20 @@
                       (result nil)
                       (fail))))))
 
-(defn chars-as-str [ch]
+(defn- chars-as-str [ch]
   (<$> #(apply str %) (many ch)))
 
 ; (defn lexeme [p] (*> #"[\s\n\r]+" p))
 
-(defn lexeme [p]
+(defn white-space [p]
   (>> spaces p))
 
+(defn lexeme [p]
+  (let-bind [a p _ spaces]
+            (result a)))
+
 (defn symb [name]
-  (string name))
+  (lexeme (string name)))
 
 (def any-token
   (make-parser
@@ -294,9 +298,9 @@
      (satisfy #(Character/isDigit ^Character %)))
 
 (def identifier
-     (let-bind [c  letter
-                cs (many (<|> letter digit))]
-               (result (apply str (cons c cs)))))
+     (lexeme (let-bind [c  letter
+                        cs (many (<|> letter digit))]
+               (result (apply str (cons c cs))))))
 
 (def eof
      (make-monad 'Parser
@@ -316,8 +320,8 @@
 (def spaces (many space))
 
 (def string-literal
-  (stringify (between (is-char \") (is-char \") (many (not-char \")))))
+  (lexeme (stringify (between (is-char \") (is-char \") (many (not-char \"))))))
 
 (def integer
-  (stringify (many1 digit)))
+  (lexeme (stringify (many1 digit))))
 
