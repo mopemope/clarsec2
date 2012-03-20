@@ -183,7 +183,7 @@
             (result (concat [a] as))))
 
 
-(defn end-by-m [f p sep]
+(defn- end-by-m [f p sep]
   (f (let-bind [r p
                 _ sep]
        (result r))))
