@@ -10,7 +10,7 @@ library works.
 
     (defproject your-project "0.0.1-SNAPSHOT"
            :description "descriptions for your project"
-           :dependencies [[org.clojars.mopemope/clarsec "0.0.1"]
+           :dependencies [[org.clojars.mopemope/clarsec "0.3.0"]
                            ...]
            ...)
 ## Usage
