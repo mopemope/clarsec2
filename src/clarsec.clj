@@ -210,12 +210,12 @@
 
 
 
-; (defn string [strn] (as-parser strn))
+(defn string [strn] (as-parser strn))
 
 
-(defn string [strn]
-  (>>== (m-sequence (map is-char strn))
-        #(apply str %)))
+; (defn string [strn]
+  ; (>>== (m-sequence (map is-char strn))
+        ; #(apply str %)))
 
 (defn- no-remaining [p]
   (<* p (make-parser
@@ -285,17 +285,13 @@
 
 (def dot (symb "."))
 
-(def letter
-     (satisfy #(Character/isLetter ^Character %)))
+(def letter (satisfy #(Character/isLetter ^Character %)))
 
-(def upper-char
-     (satisfy #(Character/isUpperCase ^Character %)))
+(def upper-char (satisfy #(Character/isUpperCase ^Character %)))
 
-(def lower-char
-     (satisfy #(Character/isLowerCase ^Character %)))
+(def lower-char (satisfy #(Character/isLowerCase ^Character %)))
 
-(def digit
-     (satisfy #(Character/isDigit ^Character %)))
+(def digit (satisfy #(Character/isDigit ^Character %)))
 
 (def identifier
      (lexeme (let-bind [c  letter
@@ -315,9 +311,11 @@
 
 (def aspace (satisfy #(= % \space)))
 
-(def space (one-of " \r\n\t"))
+(def space #"[\s\n\r]")
+; (def space (one-of " \r\n\t"))
 
-(def spaces (many space))
+(def spaces #"[\s\n\r]*")
+; (def spaces (many space))
 
 (def string-literal
   (lexeme (stringify (between (is-char \") (is-char \") (many (not-char \"))))))
